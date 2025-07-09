@@ -12,6 +12,8 @@ spring:
     show-sql: false
     hibernate:
       ddl-auto: validate
+    properties:
+      "[hibernate.generate_statistics]": true
   output:
     ansi:
       enabled: always
@@ -27,3 +29,28 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     url: ${DB_URL}  
+
+# https://docs.spring.io/spring-boot/reference/actuator/endpoints.html
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+        - metrics
+        - loggers
+        - health
+        - http
+        - info
+        - prometheus
+        - auditevents
+        # - logfile
+  endpoint:
+    health:
+      access: read-only
+      show-details: always
+    metrics:
+      access: read-only
+    auditevents:
+      access: read-only
+    prometheus:
+      access: read-only
