@@ -15,7 +15,6 @@ import jakarta.persistence.EntityManager;
 import net.bytebuddy.utility.RandomString;
 
 @DataJpaTest
-@ActiveProfiles("test")
 public class CompanyRepositoryTest {
 
     @Autowired

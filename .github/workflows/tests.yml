@@ -17,4 +17,5 @@ jobs:
           java-version: '17'
 
       - name: Run test 
-        run: mvn clean test
+        run: mvn clean test -Dspring.profiles.active=test
+

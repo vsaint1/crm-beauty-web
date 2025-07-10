@@ -6,7 +6,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 
 @SpringBootTest(classes = CrmBeautyApplication.class)
-@ActiveProfiles("test")
 class CrmBeautyApplicationTests {
 
 	@Test
