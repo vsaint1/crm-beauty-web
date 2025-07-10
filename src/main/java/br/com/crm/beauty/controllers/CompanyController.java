@@ -1,0 +1,64 @@
+package br.com.crm.beauty.controllers;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import br.com.crm.beauty.models.Company;
+import br.com.crm.beauty.services.CompanyService;
+
+import java.net.URI;
+import java.util.UUID;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+@RestController
+@RequestMapping("/api/v1/companies")
+public class CompanyController {
+
+    private CompanyService companyService;
+
+    public CompanyController(CompanyService companyService) {
+        this.companyService = companyService;
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<Company>> listAllPaged(
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+
+        var result = companyService.findAll(pageable);
+
+        return ResponseEntity.ok().body(result);
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<Company> findById(@PathVariable UUID id) {
+
+        var company = companyService.findById(id);
+
+        return ResponseEntity.ok().body(company);
+    }
+
+    @PostMapping("create")
+    public ResponseEntity<Company> register(@RequestBody Company entity) {
+
+        var created = companyService.add(entity);
+        URI uri = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(created.getId())
+                .toUri();
+
+        return ResponseEntity.created(uri).body(created);
+    }
+
+}
