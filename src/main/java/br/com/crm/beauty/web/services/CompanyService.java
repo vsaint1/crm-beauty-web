@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.crm.beauty.helpers.Helper;
 import br.com.crm.beauty.web.dtos.CompanyDto;
+import br.com.crm.beauty.web.exceptions.NotFoundException;
 import br.com.crm.beauty.web.models.Company;
 import br.com.crm.beauty.web.repositories.CompanyRepository;
 
@@ -43,7 +44,7 @@ public class CompanyService {
     private Company getById(UUID id) {
         var company = companyRepository.findById(id).orElseThrow(() -> {
             logger.warn("Company not found with id " + id);
-            return new RuntimeException("Company not found with id " + id);
+            return new NotFoundException("Company not found with id " + id);
         });
 
         return company;

@@ -3,6 +3,8 @@ package br.com.crm.beauty.web.dtos;
 import java.util.Date;
 import java.util.UUID;
 
+import org.hibernate.validator.constraints.br.CNPJ;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
