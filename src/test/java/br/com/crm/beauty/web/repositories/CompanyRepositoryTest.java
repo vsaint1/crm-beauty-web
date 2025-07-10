@@ -1,5 +1,8 @@
 package br.com.crm.beauty.web.repositories;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 import java.util.UUID;
 
 import org.assertj.core.api.Assertions;
@@ -24,8 +27,7 @@ public class CompanyRepositoryTest {
     CompanyRepository companyRepository;
 
     @Test
-    @DisplayName("Should find company by slug")
-    void findBySlugSuccess() {
+    void findBySlug_WhenExists_ReturnCompany() {
 
         var company = createCompany("hello world");
         var result = companyRepository.findBySlug("hello-world");
@@ -34,13 +36,12 @@ public class CompanyRepositoryTest {
     }
 
     @Test
-    @DisplayName("Should fail to find company by slug")
-    void findBySlugFail() {
+    void findBySlug_WhenNotExists_ReturnNull() {
 
         createCompany("Mercado Livre");
         var result = companyRepository.findBySlug("mercado-libre");
 
-        Assertions.assertThat(result).isNull();
+        assertNull(result);
     }
 
     private Company createCompany(String name) {
