@@ -1,4 +1,4 @@
-package br.com.crm.beauty.models;
+package br.com.crm.beauty.web.models;
 
 import jakarta.persistence.*;
 
@@ -154,7 +154,7 @@ public class Company implements Serializable {
     /**
      * @return boolean return the isActive
      */
-    public boolean isIsActive() {
+    public boolean isActive() {
         return isActive;
     }
 

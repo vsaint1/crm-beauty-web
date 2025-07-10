@@ -1,4 +1,4 @@
-package br.com.crm.beauty.services;
+package br.com.crm.beauty.web.services;
 
 import java.util.UUID;
 
@@ -8,8 +8,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.crm.beauty.helpers.Helper;
-import br.com.crm.beauty.models.Company;
-import br.com.crm.beauty.repositories.CompanyRepository;
+import br.com.crm.beauty.web.dtos.CompanyDto;
+import br.com.crm.beauty.web.models.Company;
+import br.com.crm.beauty.web.repositories.CompanyRepository;
 
 @Service
 public class CompanyService {
@@ -22,7 +23,7 @@ public class CompanyService {
         this.companyRepository = companyRepository;
     }
 
-    public Company findById(UUID id) {
+    private Company getById(UUID id) {
         var company = companyRepository.findById(id).orElseThrow(() -> {
             logger.warn("Company not found with id " + id);
             return new RuntimeException("Company not found with id " + id);
@@ -32,21 +33,48 @@ public class CompanyService {
 
     }
 
-    public Page<Company> findAll(Pageable pageable) {
-        logger.info("Searching for all companies");
-        return companyRepository.findAll(pageable);
+    public CompanyDto findById(UUID id) {
+        var company = getById(id);
+
+        return toDTO(company);
     }
 
-    public Company add(Company company) {
+    private CompanyDto toDTO(Company company) {
+        var dto = new CompanyDto(
+                company.getId(),
+                company.getName(),
+                company.getSlug(),
+                company.getLogoUrl(),
+                company.getPrimaryColor(),
+                company.getSecondaryColor(),
+                company.getDescription(),
+                company.isActive(),
+                company.getCreatedAt(),
+                company.getCnpj());
+
+        return dto;
+    }
+
+    public Page<CompanyDto> findAll(Pageable pageable) {
+        logger.info("Searching for all companies");
+
+        Page<CompanyDto> itens = companyRepository.findAll(pageable)
+                .map(this::toDTO);
+
+        return itens;
+    }
+
+    public CompanyDto add(Company company) {
         logger.info("A company was registered " + company.getName());
         var slug = Helper.slugify(company.getName());
         company.setSlug(slug);
+        companyRepository.save(company);
 
-        return companyRepository.save(company);
+        return this.toDTO(company);
     }
 
-    public Company update(UUID id, Company company) {
-        var entity = findById(id);
+    public CompanyDto update(UUID id, Company company) {
+        var entity = getById(id);
 
         if (entity != null) {
             var slug = Helper.slugify(entity.getName());
@@ -58,15 +86,16 @@ public class CompanyService {
             entity.setDescription(company.getDescription());
             entity.setCnpj(company.getCnpj());
 
-            return companyRepository.save(entity);
+            companyRepository.save(entity);
+            return this.toDTO(entity);
         }
 
-        return entity;
+        return this.toDTO(entity);
     }
 
     public void updateActive(UUID id) {
-        var entity = findById(id);
-        var status = entity.isIsActive();
+        var entity = getById(id);
+        var status = entity.isActive();
         entity.setIsActive(!status);
 
         companyRepository.save(entity);

@@ -1,12 +1,13 @@
-package br.com.crm.beauty.controllers;
+package br.com.crm.beauty.web.controllers;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import br.com.crm.beauty.models.Company;
-import br.com.crm.beauty.services.CompanyService;
+import br.com.crm.beauty.web.dtos.CompanyDto;
+import br.com.crm.beauty.web.models.Company;
+import br.com.crm.beauty.web.services.CompanyService;
 
 import java.net.URI;
 import java.util.UUID;
@@ -35,7 +36,7 @@ public class CompanyController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<Company>> listAllPaged(
+    public ResponseEntity<Page<CompanyDto>> listAllPaged(
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
 
         var result = companyService.findAll(pageable);
@@ -44,7 +45,7 @@ public class CompanyController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Company> findById(@PathVariable UUID id) {
+    public ResponseEntity<CompanyDto> findById(@PathVariable UUID id) {
 
         var company = companyService.findById(id);
 
@@ -52,7 +53,7 @@ public class CompanyController {
     }
 
     @PutMapping("edit/{id}")
-    public  ResponseEntity<Company> update(@PathVariable UUID id, @RequestBody Company company) {
+    public  ResponseEntity<CompanyDto> update(@PathVariable UUID id, @RequestBody Company company) {
         
         var updated = companyService.update(id, company);
 
@@ -69,13 +70,13 @@ public class CompanyController {
     }
 
     @PostMapping("create")
-    public ResponseEntity<Company> register(@RequestBody Company entity) {
+    public ResponseEntity<CompanyDto> register(@RequestBody Company entity) {
 
         var created = companyService.add(entity);
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(created.getId())
+                .buildAndExpand(created.id())
                 .toUri();
 
         return ResponseEntity.created(uri).body(created);
