@@ -3,6 +3,7 @@ package br.com.crm.beauty.web.services;
 import java.util.Date;
 import java.util.UUID;
 
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,8 +21,23 @@ public class CompanyService {
 
     private CompanyRepository companyRepository;
 
-    public CompanyService(CompanyRepository companyRepository) {
+    private ModelMapper modelMapper;
+
+    public CompanyService(CompanyRepository companyRepository, ModelMapper modelMapper) {
         this.companyRepository = companyRepository;
+        this.modelMapper = modelMapper;
+    }
+
+    private Company toModel(CompanyDto company) {
+        var model = modelMapper.map(company, Company.class);
+
+        return model;
+    }
+
+    private CompanyDto toDTO(Company company) {
+        var dto = modelMapper.map(company, CompanyDto.class);
+
+        return dto;
     }
 
     private Company getById(UUID id) {
@@ -40,38 +56,6 @@ public class CompanyService {
         return toDTO(company);
     }
 
-    private Company toModel(CompanyDto company) {
-        var model = new Company();
-        model.setId(company.id());
-        model.setName(company.name());
-        model.setSlug(company.slug());
-        model.setLogoUrl(company.logoUrl());
-        model.setPrimaryColor(company.primaryColor());
-        model.setSecondaryColor(company.secondaryColor());
-        model.setDescription(company.description());
-        model.setIsActive(company.isActive());
-        model.setCreatedAt(company.createdAt());
-        model.setCnpj(company.cnpj());
-
-        return model;
-    }
-
-    private CompanyDto toDTO(Company company) {
-        var dto = new CompanyDto(
-                company.getId(),
-                company.getName(),
-                company.getSlug(),
-                company.getLogoUrl(),
-                company.getPrimaryColor(),
-                company.getSecondaryColor(),
-                company.getDescription(),
-                company.isActive(),
-                company.getCreatedAt(),
-                company.getCnpj());
-
-        return dto;
-    }
-
     public Page<CompanyDto> findAll(Pageable pageable) {
         logger.info("Searching for all companies");
 
@@ -82,12 +66,12 @@ public class CompanyService {
     }
 
     public Company add(CompanyDto dto) {
-        logger.info("A company was registered " + dto.name());
+        logger.info("A company was registered " + dto.getName());
 
-        var slug = Helper.slugify(dto.name());
+        var slug = Helper.slugify(dto.getName());
 
         var entity = toModel(dto);
-        
+
         entity.setSlug(slug);
         entity.setCreatedAt(new Date());
 
