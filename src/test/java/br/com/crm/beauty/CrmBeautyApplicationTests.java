@@ -1,10 +1,11 @@
-package br.com.beauty.beauty;
+package br.com.crm.beauty;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class BeautyApplicationTests {
+
+@SpringBootTest(classes = CrmBeautyApplication.class)
+class CrmBeautyApplicationTests {
 
 	@Test
 	void contextLoads() {
