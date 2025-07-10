@@ -27,7 +27,7 @@ public class CompanyRepositoryTest {
     CompanyRepository companyRepository;
 
     @Test
-    void findBySlug_WhenExists_ReturnCompany() {
+    void shouldReturnCompanyWhenExists() {
 
         var company = createCompany("hello world");
         var result = companyRepository.findBySlug("hello-world");
@@ -36,7 +36,7 @@ public class CompanyRepositoryTest {
     }
 
     @Test
-    void findBySlug_WhenNotExists_ReturnNull() {
+    void shouldReturnNullWhenNotExists() {
 
         createCompany("Mercado Livre");
         var result = companyRepository.findBySlug("mercado-libre");

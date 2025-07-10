@@ -48,7 +48,7 @@ public class CompanyServiceTest {
     }
 
     @Test
-    void findById_WhenExists_ReturnCompanyDTO() {
+    void shouldReturnCompanyDtoWhenExists() {
         var company = new Company();
 
         var uuid = UUID.randomUUID();
@@ -79,7 +79,7 @@ public class CompanyServiceTest {
     }
 
     @Test
-    void findById_WhenNotExists_ThrowsNotFoundException() {
+    void shouldThrowNotFoundExceptionWhenDoesNotExists() {
 
         when(companyRepository.findById(any())).thenThrow(NotFoundException.class);
 
