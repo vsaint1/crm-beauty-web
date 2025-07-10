@@ -17,9 +17,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 @RestController
 @RequestMapping("/api/v1/companies")
@@ -46,6 +49,23 @@ public class CompanyController {
         var company = companyService.findById(id);
 
         return ResponseEntity.ok().body(company);
+    }
+
+    @PutMapping("edit/{id}")
+    public  ResponseEntity<Company> update(@PathVariable UUID id, @RequestBody Company company) {
+        
+        var updated = companyService.update(id, company);
+
+        return ResponseEntity.ok().body(updated);
+    }
+
+    @PatchMapping("change-status/{id}")
+    public ResponseEntity<Company> changeStatus(@PathVariable UUID id) {
+
+        companyService.updateActive(id);
+
+        return ResponseEntity.noContent().build();
+
     }
 
     @PostMapping("create")

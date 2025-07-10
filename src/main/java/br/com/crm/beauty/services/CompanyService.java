@@ -64,6 +64,15 @@ public class CompanyService {
         return entity;
     }
 
+    public void updateActive(UUID id) {
+        var entity = findById(id);
+        var status = entity.isIsActive();
+        entity.setIsActive(!status);
+
+        companyRepository.save(entity);
+
+    }
+
     public void delete(UUID id) {
         companyRepository.deleteById(id);
     }
