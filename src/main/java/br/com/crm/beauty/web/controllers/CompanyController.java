@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -70,13 +71,14 @@ public class CompanyController {
     }
 
     @PostMapping("create")
-    public ResponseEntity<CompanyDto> register(@RequestBody Company entity) {
+    public ResponseEntity<Company> register(@RequestBody @Validated CompanyDto entity) {
 
         var created = companyService.add(entity);
+
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(created.id())
+                .buildAndExpand(created.getId())
                 .toUri();
 
         return ResponseEntity.created(uri).body(created);

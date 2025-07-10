@@ -1,5 +1,6 @@
 package br.com.crm.beauty.web.services;
 
+import java.util.Date;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -39,6 +40,22 @@ public class CompanyService {
         return toDTO(company);
     }
 
+    private Company toModel(CompanyDto company) {
+        var model = new Company();
+        model.setId(company.id());
+        model.setName(company.name());
+        model.setSlug(company.slug());
+        model.setLogoUrl(company.logoUrl());
+        model.setPrimaryColor(company.primaryColor());
+        model.setSecondaryColor(company.secondaryColor());
+        model.setDescription(company.description());
+        model.setIsActive(company.isActive());
+        model.setCreatedAt(company.createdAt());
+        model.setCnpj(company.cnpj());
+
+        return model;
+    }
+
     private CompanyDto toDTO(Company company) {
         var dto = new CompanyDto(
                 company.getId(),
@@ -64,13 +81,19 @@ public class CompanyService {
         return itens;
     }
 
-    public CompanyDto add(Company company) {
-        logger.info("A company was registered " + company.getName());
-        var slug = Helper.slugify(company.getName());
-        company.setSlug(slug);
-        companyRepository.save(company);
+    public Company add(CompanyDto dto) {
+        logger.info("A company was registered " + dto.name());
 
-        return this.toDTO(company);
+        var slug = Helper.slugify(dto.name());
+
+        var entity = toModel(dto);
+        
+        entity.setSlug(slug);
+        entity.setCreatedAt(new Date());
+
+        companyRepository.save(entity);
+
+        return entity;
     }
 
     public CompanyDto update(UUID id, Company company) {
