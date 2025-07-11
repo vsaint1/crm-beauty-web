@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Entity
-@Table(name = "tb_company")
+@Table(name = "tb_companies")
 public class Company implements Serializable {
 
     private static final long serialVersionUID = 1L;

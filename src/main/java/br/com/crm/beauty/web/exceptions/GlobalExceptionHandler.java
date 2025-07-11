@@ -47,6 +47,27 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problem);
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ProblemDetails> handleRuntimeException(
+            RuntimeException ex,
+            HttpServletRequest request) {
+
+        Map<String, String[]> errors = new HashMap<>();
+        errors.put("problem", new String[] { ex.getLocalizedMessage() });
+
+        ProblemDetails problem = new ProblemDetails();
+        problem.setType("https://tools.ietf.org/html/rfc7231#section-6.5.1");
+        problem.setTitle("Runtime error");
+        problem.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        problem.setDetail("An unexpected error occurred");
+        problem.setInstance(request.getRequestURI());
+        problem.setTraceId(UUID.randomUUID().toString());
+        problem.setErrors(errors);
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
+
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ProblemDetails> handleDataIntegrityViolation(
             DataIntegrityViolationException ex,

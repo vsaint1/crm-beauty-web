@@ -1,4 +1,4 @@
-CREATE TABLE tb_company (
+CREATE TABLE tb_companies (
     id BINARY(16) NOT NULL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     slug VARCHAR(255),
