@@ -1,32 +1,23 @@
 package br.com.crm.beauty.web.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import br.com.crm.beauty.web.exceptions.NotFoundException;
+
 public enum Position {
 
-    EMPLOYEE(1),
-    OWNER(2),
-    MANAGER(3);
+    EMPLOYEE("EMPLOYEE"),
+    OWNER("OWNER"),
+    MANAGER("MANAGER");
 
-    private final int code;
+    private final String pos;
 
-    Position(int code) {
-        this.code = code;
+    Position(String pos) {
+        this.pos = pos;
     }
 
-    public int getCode() {
-        return code;
+    public String getPos() {
+        return pos;
     }
 
-    @Override
-    public String toString() {
-        return name();
-    }
-
-    public static Position fromCode(int code) {
-        for (Position p : values()) {
-            if (p.code == code) {
-                return p;
-            }
-        }
-        throw new IllegalArgumentException("Invalid code: " + code);
-    }
 }
