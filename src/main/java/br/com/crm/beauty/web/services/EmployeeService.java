@@ -51,6 +51,9 @@ public class EmployeeService {
 
         employeeRepository.save(employee);
 
+        logger.info(String.format("Employee was registered with user_id(%d) on company_id(%s):", employee.getId(),
+                employee.getCompany().getId()));
+
         var employeeDto = modelMapper.map(employee, EmployeeDto.class);
 
         return employeeDto;
@@ -63,6 +66,9 @@ public class EmployeeService {
 
         employee.setActive(false);
         employee.setUpdatedAt(LocalDateTime.now());
+
+        logger.info(String.format("Employee was deactivated with user_id(%d) from company_id(%s):", employee.getId(),
+                employee.getCompany().getId()));
 
         employeeRepository.save(employee);
     }
@@ -77,7 +83,7 @@ public class EmployeeService {
                     + employee.getCompany().getId());
             throw new NotFoundException("Employee not found");
         }
-        
+
         // TODO: only admin can change company and user
         // existingEmployee.setCompany(employee.getCompany());
         // existingEmployee.setUser(employee.getUser());

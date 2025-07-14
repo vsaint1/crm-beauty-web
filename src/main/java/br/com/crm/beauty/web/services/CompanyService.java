@@ -58,7 +58,7 @@ public class CompanyService {
     }
 
     public Page<CompanyDto> findAll(Pageable pageable) {
-        logger.info("Searching for all companies");
+        // logger.info("Searching for all companies");
 
         Page<CompanyDto> itens = companyRepository.findAll(pageable)
                 .map(this::toDTO);
