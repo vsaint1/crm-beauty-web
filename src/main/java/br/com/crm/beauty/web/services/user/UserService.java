@@ -6,6 +6,10 @@ import java.util.Optional;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.crm.beauty.web.dtos.PasswordUpdateDto;
@@ -15,7 +19,7 @@ import br.com.crm.beauty.web.models.User;
 import br.com.crm.beauty.web.repositories.UserRepository;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
@@ -40,6 +44,9 @@ public class UserService {
 
         var entity = toModel(user);
 
+        var encryptedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
+
+        entity.setPassword(encryptedPassword);
         userRepository.save(entity);
 
         user.setId(entity.getId());
@@ -51,14 +58,16 @@ public class UserService {
     public void updatePassword(Long id, PasswordUpdateDto password) {
         var entity = getById(id);
 
+        var bcrypt = new BCryptPasswordEncoder();
+
         // TODO: send email etc
-        // compare encrypted with spring security
-        if (entity.getPassword().equals(password.oldPassword())) {
+        if (bcrypt.matches(password.oldPassword(), entity.getPassword())) {
 
             if (!password.newPassword().equals(password.confirmPassword()))
                 throw new RuntimeException("Passwords do not match.");
 
-            entity.setPassword(password.newPassword());
+            var encryptedPassword = new BCryptPasswordEncoder().encode(password.newPassword());
+            entity.setPassword(encryptedPassword);
             entity = userRepository.save(entity);
             return;
         }
@@ -98,6 +107,12 @@ public class UserService {
 
     public Page<UserDto> findAll(Pageable pageable) {
         return userRepository.findAll(pageable).map(this::toDTO);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Email or password is incorrect"));
     }
 
 }

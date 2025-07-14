@@ -1,6 +1,8 @@
 package br.com.crm.beauty.web.dtos;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -24,11 +26,19 @@ public class UserDto {
     @Min(6)
     private String password;
 
-    private Role role = Role.USER;
+    private Role role;
 
     private Date createdAt;
 
     public UserDto() {
+    }
+
+    public Collection<String> getRoles() {
+        if (role.name().equals(Role.ADMIN.name())) {
+            return List.of("ROLE_ADMIN", "ROLE_USER");
+        }
+
+        return List.of("ROLE_USER");
     }
 
     public Long getId() {
