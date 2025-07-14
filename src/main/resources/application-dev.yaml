@@ -56,3 +56,9 @@ management:
       access: read-only
     prometheus:
       access: read-only
+
+jwt:
+  private:
+    key: classpath:keys/auth.key
+  public:
+    key: classpath:keys/auth.pub
