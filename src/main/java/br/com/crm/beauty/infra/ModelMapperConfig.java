@@ -12,7 +12,8 @@ public class ModelMapperConfig {
     public ModelMapper modelMapper() {
         ModelMapper mapper = new ModelMapper();
 
-        mapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
+        var config = mapper.getConfiguration();
+        config.setSkipNullEnabled(true);
 
         return mapper;
     }
