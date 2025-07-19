@@ -7,6 +7,7 @@ import java.security.interfaces.RSAPublicKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -25,6 +26,7 @@ import com.nimbusds.jose.proc.SecurityContext;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig {
 
     @Value("${jwt.public.key}")
@@ -40,8 +42,13 @@ public class SecurityConfig {
                 .cors(cors -> cors.disable())
                 .sessionManagement(ses -> ses.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/login","/api/v1/auth/register", "/error","/actuator/**").permitAll()
-                        .anyRequest().authenticated());
+                        .requestMatchers("/api/v1/auth/login", "/api/v1/auth/register", "/error", "/actuator/**")
+                        .permitAll()
+                        .requestMatchers("/api/v1/companies","/api/v1/users").hasRole("ADMIN")
+                        .anyRequest().authenticated())
+
+              
+                .oauth2ResourceServer(conf -> conf.jwt(jwt -> jwt.decoder(this.jwtDecoder())));
 
         return http.build();
     }

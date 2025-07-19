@@ -1,11 +1,18 @@
 package br.com.crm.beauty.web.services.user;
 
+import java.nio.file.AccessDeniedException;
+import java.util.Set;
+
 import org.slf4j.Logger;
+import org.springframework.expression.AccessException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.crm.beauty.web.dtos.AuthenticationDto;
 import br.com.crm.beauty.web.dtos.JwtTokenDto;
+import br.com.crm.beauty.web.enums.Position;
+import br.com.crm.beauty.web.models.Employee;
+import br.com.crm.beauty.web.services.EmployeeService;
 import br.com.crm.beauty.web.services.JwtService;
 
 @Service
@@ -15,11 +22,14 @@ public class AuthenticationService {
 
     private final UserService userService;
 
+    private final EmployeeService employeeService;
+
     private final Logger logger = org.slf4j.LoggerFactory.getLogger(AuthenticationService.class);
 
-    public AuthenticationService(JwtService jwtService, UserService userService) {
+    public AuthenticationService(JwtService jwtService, UserService userService, EmployeeService employeeService) {
         this.jwtService = jwtService;
         this.userService = userService;
+        this.employeeService = employeeService;
     }
 
     public JwtTokenDto authenticate(AuthenticationDto auth) {
@@ -39,4 +49,6 @@ public class AuthenticationService {
 
         return jwtService.generate(user.get());
     }
+
+    
 }

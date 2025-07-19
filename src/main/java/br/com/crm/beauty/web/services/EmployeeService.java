@@ -1,12 +1,14 @@
 package br.com.crm.beauty.web.services;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import br.com.crm.beauty.web.dtos.EmployeeDto;
@@ -24,15 +26,18 @@ public class EmployeeService {
     private EmployeeRepository employeeRepository;
     private CompanyRepository companyRepository;
     private UserRepository userRepository;
+    private JwtService jwtService;
+
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(EmployeeService.class);
 
     private ModelMapper modelMapper;
 
     public EmployeeService(EmployeeRepository employeeRepository, CompanyRepository companyRepository,
-            UserRepository userRepository, ModelMapper modelMapper) {
+            UserRepository userRepository, JwtService jwtService, ModelMapper modelMapper) {
         this.employeeRepository = employeeRepository;
         this.companyRepository = companyRepository;
         this.userRepository = userRepository;
+        this.jwtService = jwtService;
         this.modelMapper = modelMapper;
     }
 
@@ -71,6 +76,27 @@ public class EmployeeService {
                 employee.getCompany().getId()));
 
         employeeRepository.save(employee);
+    }
+
+    public EmployeeDto findEmployeeByToken(String token) {
+
+        var subject = jwtService.decodeSubject(token);
+
+        // Optional<User> userOptional = userRepository.findByEmail(subject);
+
+        // if (userOptional.isEmpty()) {
+        //     logger.warn("User not found for email: " + subject);
+        //     throw new NotFoundException("User not found");
+        // }
+
+        Employee employee = employeeRepository.findActiveEmployeeWithUserAndCompanyByUserEmail(subject);
+
+        if (employee == null) {
+            logger.warn("Employee not found for user email: " + subject);
+            throw new NotFoundException("Employee data not found");
+        }
+
+        return modelMapper.map(employee, EmployeeDto.class);
     }
 
     public EmployeeDto update(EmployeeDto employee) {
@@ -112,6 +138,17 @@ public class EmployeeService {
         var employees = employeeRepository.findByCompanyIdPaged(companyId, pageable);
 
         return employees.map(employee -> modelMapper.map(employee, EmployeeDto.class));
+    }
+
+    public Employee findByEmail(String name) {
+       var employee = employeeRepository.findByUserEmail(name);
+
+        if (employee == null) {
+            logger.warn("Employee not found with email: " + name);
+            throw new NotFoundException("Employee not found");
+        }
+
+        return employee;
     }
 
 }

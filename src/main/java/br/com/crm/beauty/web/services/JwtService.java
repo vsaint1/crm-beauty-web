@@ -37,6 +37,7 @@ public class JwtService {
                 .issuedAt(createdAt.toInstant(ZoneOffset.UTC))
                 .expiresAt(expiration.toInstant(ZoneOffset.UTC))
                 .subject(user.getEmail())
+                .claim("id", user.getId())
                 .claim("roles", user.getRoles()).build();
 
         var jwt = jwtEncoder.encode(JwtEncoderParameters.from(claims));

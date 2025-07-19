@@ -13,7 +13,7 @@ public class EmployeeDto {
 
     private Long id;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    // @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private CompanyDto company;
 
     private UserDto user;

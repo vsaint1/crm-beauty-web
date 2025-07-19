@@ -1,5 +1,6 @@
 package br.com.crm.beauty.web.exceptions;
 
+import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import ch.qos.logback.core.boolex.EvaluationException;
 import jakarta.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
@@ -87,7 +89,7 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(problem);
     }
-
+    
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ProblemDetails> handleNotFoundException(
             NotFoundException ex,

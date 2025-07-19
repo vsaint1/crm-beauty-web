@@ -22,10 +22,9 @@ import br.com.crm.beauty.web.repositories.UserRepository;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
-
     private final ModelMapper modelMapper;
 
-    public UserService(UserRepository userRepository, ModelMapper modelMapper) {
+    public UserService(UserRepository userRepository,  ModelMapper modelMapper) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
     }
