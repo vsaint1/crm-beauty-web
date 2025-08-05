@@ -14,17 +14,6 @@ public class ProblemDetails {
     public ProblemDetails() {
     }
 
-    public ProblemDetails(String type, String title, int status, String detail, String instance, String traceId,
-            Map<String, String[]> errors) {
-        this.type = type;
-        this.title = title;
-        this.status = status;
-        this.detail = detail;
-        this.instance = instance;
-        this.traceId = traceId;
-        this.errors = errors;
-    }
-
     public String getType() {
         return type;
     }

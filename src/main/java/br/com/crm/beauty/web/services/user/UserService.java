@@ -3,6 +3,7 @@ package br.com.crm.beauty.web.services.user;
 import java.util.Date;
 import java.util.Optional;
 
+import br.com.crm.beauty.web.enums.Role;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,10 +44,14 @@ public class UserService implements UserDetailsService {
 
         var entity = toModel(user);
 
+        entity.setRole(Role.USER);
+        entity.setCreatedAt(new Date());
+
         var encryptedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
 
         entity.setPassword(encryptedPassword);
         userRepository.save(entity);
+
 
         user.setId(entity.getId());
 
