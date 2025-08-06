@@ -1,8 +1,12 @@
 package br.com.crm.beauty.web.dtos;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import br.com.crm.beauty.web.models.WorkingDay;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import br.com.crm.beauty.web.enums.Position;
@@ -28,6 +32,8 @@ public class EmployeeDto {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
+    private List<WorkingDay> workingDays = new ArrayList<>();
 
     public EmployeeDto() {
     }
@@ -96,4 +102,11 @@ public class EmployeeDto {
         this.updatedAt = updatedAt;
     }
 
+    public List<WorkingDay> getWorkingDays() {
+        return workingDays;
+    }
+
+    public void setWorkingDays(List<WorkingDay> workingDays) {
+        this.workingDays = workingDays;
+    }
 }

@@ -39,6 +39,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
           FROM Employee e
           LEFT JOIN FETCH e.user u
           JOIN FETCH e.company c
+          LEFT JOIN FETCH e.workingDays wd
           WHERE (c is NULL OR e.isActive = true) AND e.user.email = ?1
       """)
   Employee findActiveEmployeeWithUserAndCompanyByUserEmail(String email);

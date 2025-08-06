@@ -40,7 +40,6 @@ public class UserService implements UserDetailsService {
 
     public UserDto add(UserDto user) {
 
-        user.setCreatedAt(new Date());
 
         var entity = toModel(user);
 
@@ -107,6 +106,11 @@ public class UserService implements UserDetailsService {
 
     public Optional<UserDto> findByEmail(String email) {
         return userRepository.findByEmail(email).map(this::toDTO);
+    }
+
+    public User findByEmailOrThrow(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("User not found with email " + email));
     }
 
     public Page<UserDto> findAll(Pageable pageable) {

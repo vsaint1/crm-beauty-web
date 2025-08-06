@@ -34,13 +34,14 @@ public class AuthorizationService {
         var employee = employeeService.findByEmail(auth.getName());
 
         if (employee == null) {
-            logger.warn("Employee not found for authentication: {}", auth.getName());
+
+            logger.warn("Employee not found for email: {}", auth.getName());
             return false;
         }
 
-        logger.info("Checking permissions for employee with ID: {}", employee.getId());
         if (!Set.of(Position.OWNER, Position.MANAGER).contains(employee.getPosition())) {
-            logger.warn("Access denied for employee with ID: {}", employee.getId());
+            logger.warn("Access denied for employee: {} with position: {} company_name {}",
+                    employee.getId(), employee.getPosition(),employee.getCompany().getName());
 
             return false;
         }

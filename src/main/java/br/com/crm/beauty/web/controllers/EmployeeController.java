@@ -3,11 +3,13 @@ package br.com.crm.beauty.web.controllers;
 import java.security.Principal;
 import java.util.UUID;
 
+import br.com.crm.beauty.web.dtos.WorkingDayDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/api/v1/employees")
 public class EmployeeController {
 
-    private EmployeeService employeeService;
+    private final EmployeeService employeeService;
 
     public EmployeeController(EmployeeService employeeService) {
         this.employeeService = employeeService;
@@ -39,7 +41,7 @@ public class EmployeeController {
 
     @GetMapping
     public ResponseEntity<Page<EmployeeDto>> searchByCompanyId(@RequestParam("company_id") UUID companyId,
-            Pageable pageable) {
+                                                               Pageable pageable) {
         var employees = employeeService.listByCompanyId(companyId, pageable);
         return ResponseEntity.ok(employees);
     }
@@ -57,7 +59,7 @@ public class EmployeeController {
 
     @GetMapping("/search")
     public ResponseEntity<EmployeeDto> searchByQuery(@RequestParam("query") String query,
-            @RequestParam("company_id") UUID companyId) {
+                                                     @RequestParam("company_id") UUID companyId) {
         var employee = employeeService.findEmployeeQuery(query, companyId);
         return ResponseEntity.ok(employee);
     }
@@ -88,4 +90,15 @@ public class EmployeeController {
         employeeService.deactivateEmployee(id);
         return ResponseEntity.noContent().build();
     }
+
+
+    @PostMapping("add-working-day")
+    public ResponseEntity<EmployeeDto> registerWorkingDays(@RequestBody @Valid WorkingDayDto workingDayDto) {
+
+
+        var updatedEmployee = employeeService.addWorkingDays(workingDayDto);
+
+        return ResponseEntity.ok(updatedEmployee);
+    }
+
 }

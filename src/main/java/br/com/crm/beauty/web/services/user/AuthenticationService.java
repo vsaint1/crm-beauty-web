@@ -22,14 +22,11 @@ public class AuthenticationService {
 
     private final UserService userService;
 
-    private final EmployeeService employeeService;
-
     private final Logger logger = org.slf4j.LoggerFactory.getLogger(AuthenticationService.class);
 
-    public AuthenticationService(JwtService jwtService, UserService userService, EmployeeService employeeService) {
+    public AuthenticationService(JwtService jwtService, UserService userService) {
         this.jwtService = jwtService;
         this.userService = userService;
-        this.employeeService = employeeService;
     }
 
     public JwtTokenDto authenticate(AuthenticationDto auth) {

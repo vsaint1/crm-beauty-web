@@ -3,17 +3,12 @@ package br.com.crm.beauty.web.models;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import br.com.crm.beauty.web.enums.Position;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "tb_employees")
@@ -44,7 +39,16 @@ public class Employee implements Serializable {
 
     private LocalDateTime updatedAt = LocalDateTime.now();
 
+    @JsonManagedReference
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true,fetch =  FetchType.LAZY)
+    private List<WorkingDay> workingDays = new ArrayList<>();
+
     public Employee() {
+    }
+
+    public void addWorkingDay(WorkingDay workingDay) {
+        workingDays.add(workingDay);
+        workingDay.setEmployee(this);
     }
 
     public Long getId() {
@@ -110,6 +114,12 @@ public class Employee implements Serializable {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
-    
 
+    public List<WorkingDay> getWorkingDays() {
+        return workingDays;
+    }
+
+    public void setWorkingDays(List<WorkingDay> workingDays) {
+        this.workingDays = workingDays;
+    }
 }

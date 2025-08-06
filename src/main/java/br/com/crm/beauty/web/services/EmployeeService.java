@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+import br.com.crm.beauty.web.dtos.WorkingDayDto;
+import br.com.crm.beauty.web.models.WorkingDay;
+import br.com.crm.beauty.web.repositories.WorkingDayRepository;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.springframework.data.domain.Page;
@@ -23,22 +26,54 @@ import br.com.crm.beauty.web.repositories.UserRepository;
 @Service
 public class EmployeeService {
 
-    private EmployeeRepository employeeRepository;
-    private CompanyRepository companyRepository;
-    private UserRepository userRepository;
-    private JwtService jwtService;
+    private final EmployeeRepository employeeRepository;
+    private final CompanyRepository companyRepository;
+    private final UserRepository userRepository;
+    private final JwtService jwtService;
+    private final ModelMapper modelMapper;
+    private final WorkingDayRepository workingDayRepository;
 
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(EmployeeService.class);
 
-    private ModelMapper modelMapper;
-
     public EmployeeService(EmployeeRepository employeeRepository, CompanyRepository companyRepository,
-            UserRepository userRepository, JwtService jwtService, ModelMapper modelMapper) {
+                           UserRepository userRepository, JwtService jwtService, ModelMapper modelMapper, WorkingDayRepository workingDayRepository) {
         this.employeeRepository = employeeRepository;
         this.companyRepository = companyRepository;
         this.userRepository = userRepository;
         this.jwtService = jwtService;
         this.modelMapper = modelMapper;
+        this.workingDayRepository = workingDayRepository;
+    }
+
+    public Employee findById(Long id) {
+        return employeeRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Employee not found"));
+    }
+
+    public EmployeeDto addWorkingDays(WorkingDayDto workingDayDto) {
+        Employee employee = employeeRepository.findById(workingDayDto.employeeId())
+                .orElseThrow(() -> new NotFoundException("Employee not found"));
+
+
+        var existingDays = workingDayRepository.findDistinctDaysByEmployeeId(employee.getId());
+
+        for (var day : workingDayDto.days()) {
+
+            if (existingDays.contains(day)) continue;
+
+            var workingDay = new WorkingDay();
+            workingDay.setEmployee(employee);
+            workingDay.setDayOfWeek(day);
+            employee.addWorkingDay(workingDay);
+            workingDayRepository.save(workingDay);
+
+        }
+
+        var updated = employeeRepository.save(employee);
+
+        logger.info("Working days added for employee with id: {}", employee.getId());
+
+        return modelMapper.map(updated, EmployeeDto.class);
     }
 
     public EmployeeDto create(Employee employee) {
@@ -72,8 +107,7 @@ public class EmployeeService {
         employee.setActive(false);
         employee.setUpdatedAt(LocalDateTime.now());
 
-        logger.info(String.format("Employee was deactivated with user_id(%d) from company_id(%s):", employee.getId(),
-                employee.getCompany().getId()));
+        logger.info("Employee was deactivated with user_id({}) from company_id({}):", employee.getId(), employee.getCompany().getId());
 
         employeeRepository.save(employee);
     }
@@ -105,8 +139,7 @@ public class EmployeeService {
                 employee.getCompany().getId());
 
         if (existingEmployee == null) {
-            logger.warn("Employee not found with user id: " + employee.getUser().getId() + " and company id: "
-                    + employee.getCompany().getId());
+            logger.warn("Employee not found with user id: {} and company id: {}", employee.getUser().getId(), employee.getCompany().getId());
             throw new NotFoundException("Employee not found");
         }
 
@@ -141,7 +174,7 @@ public class EmployeeService {
     }
 
     public Employee findByEmail(String name) {
-       var employee = employeeRepository.findByUserEmail(name);
+        var employee = employeeRepository.findByUserEmail(name);
 
         if (employee == null) {
             logger.warn("Employee not found with email: " + name);

@@ -1,5 +1,7 @@
 package br.com.crm.beauty.web.controllers;
 
+import br.com.crm.beauty.web.models.Employee;
+import org.springframework.security.core.AuthenticatedPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,7 +37,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RequestMapping("/api/v1/companies")
 public class CompanyController {
 
-    private CompanyService companyService;
+    private final CompanyService companyService;
 
     public CompanyController(CompanyService companyService) {
         this.companyService = companyService;
@@ -77,9 +79,12 @@ public class CompanyController {
     }
 
     @PostMapping("create")
-    public ResponseEntity<Company> register(@RequestBody @Validated CompanyDto entity) {
+    public ResponseEntity<Company> register(@RequestBody @Validated CompanyDto company) {
 
-        var created = companyService.add(entity);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        var created = companyService.add(company,authentication.getName());
+
 
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()

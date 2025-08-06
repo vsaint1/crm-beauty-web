@@ -55,13 +55,13 @@ public class GlobalExceptionHandler {
             HttpServletRequest request) {
 
         Map<String, String[]> errors = new HashMap<>();
-        errors.put("problem", new String[] { ex.getLocalizedMessage() });
+        errors.put("problem", new String[]{ex.getLocalizedMessage()});
 
         ProblemDetails problem = new ProblemDetails();
         problem.setType("https://tools.ietf.org/html/rfc7231#section-6.5.1");
         problem.setTitle("Runtime error");
         problem.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        problem.setDetail("An unexpected error occurred");
+        problem.setDetail(ex.getMessage());
         problem.setInstance(request.getRequestURI());
         problem.setTraceId(UUID.randomUUID().toString());
         problem.setErrors(errors);
@@ -76,7 +76,7 @@ public class GlobalExceptionHandler {
             HttpServletRequest request) {
 
         Map<String, String[]> errors = new HashMap<>();
-        errors.put("problem", new String[] { "This resource already exists" });
+        errors.put("problem", new String[]{"This resource already exists", ex.getMessage()});
 
         ProblemDetails problem = new ProblemDetails();
         problem.setType("https://tools.ietf.org/html/rfc7231#section-6.5.8");
@@ -89,14 +89,14 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(problem);
     }
-    
+
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ProblemDetails> handleNotFoundException(
             NotFoundException ex,
             HttpServletRequest request) {
 
         Map<String, String[]> errors = new HashMap<>();
-        errors.put("problem", new String[] { ex.getMessage() });
+        errors.put("problem", new String[]{ex.getMessage()});
 
         ProblemDetails problem = new ProblemDetails();
         problem.setType("https://tools.ietf.org/html/rfc7231#section-6.5.4");
