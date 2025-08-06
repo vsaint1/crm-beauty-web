@@ -1,7 +1,6 @@
 package br.com.crm.beauty.web.services;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
 
 import br.com.crm.beauty.web.dtos.WorkingDayDto;
@@ -11,7 +10,6 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import br.com.crm.beauty.web.dtos.EmployeeDto;
@@ -50,7 +48,7 @@ public class EmployeeService {
                 .orElseThrow(() -> new NotFoundException("Employee not found"));
     }
 
-    public EmployeeDto addWorkingDays(WorkingDayDto workingDayDto) {
+    public EmployeeDto registerWorkingDays(WorkingDayDto workingDayDto) {
         Employee employee = employeeRepository.findById(workingDayDto.employeeId())
                 .orElseThrow(() -> new NotFoundException("Employee not found"));
 

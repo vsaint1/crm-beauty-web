@@ -40,7 +40,7 @@ public class Employee implements Serializable {
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true,fetch =  FetchType.LAZY)
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.PERSIST, orphanRemoval = true,fetch =  FetchType.LAZY)
     private List<WorkingDay> workingDays = new ArrayList<>();
 
     public Employee() {

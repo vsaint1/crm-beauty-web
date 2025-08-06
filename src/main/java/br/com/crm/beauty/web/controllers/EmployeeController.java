@@ -1,6 +1,5 @@
 package br.com.crm.beauty.web.controllers;
 
-import java.security.Principal;
 import java.util.UUID;
 
 import br.com.crm.beauty.web.dtos.WorkingDayDto;
@@ -9,8 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -96,7 +93,7 @@ public class EmployeeController {
     public ResponseEntity<EmployeeDto> registerWorkingDays(@RequestBody @Valid WorkingDayDto workingDayDto) {
 
 
-        var updatedEmployee = employeeService.addWorkingDays(workingDayDto);
+        var updatedEmployee = employeeService.registerWorkingDays(workingDayDto);
 
         return ResponseEntity.ok(updatedEmployee);
     }
