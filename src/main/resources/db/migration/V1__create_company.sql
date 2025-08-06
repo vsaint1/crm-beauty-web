@@ -1,8 +1,8 @@
 CREATE TABLE tb_companies (
     id BINARY(16) NOT NULL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    slug VARCHAR(255),
-    logo_url VARCHAR(512),
+    slug VARCHAR(255) UNIQUE NOT NULL,
+    logo_url VARCHAR(255),
     primary_color VARCHAR(50),
     secondary_color VARCHAR(50),
     description TEXT,
